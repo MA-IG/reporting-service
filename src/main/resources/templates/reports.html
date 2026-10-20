@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Report Templates</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Report Templates</h2>
+            <p class="text-muted mb-0">
+                Manage your JasperReports templates.
+            </p>
+        </div>
+
+        <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#createModal">
+            + New template
+        </button>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show"
+         role="alert">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show"
+         role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Templates table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+
+            <div th:if="${#lists.isEmpty(templates)}"
+                 class="text-center py-5">
+                <h5>No templates found</h5>
+                <p class="text-muted mb-0">
+                    Upload your first JasperReports template.
+                </p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(templates)}"
+                 class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Name</th>
+                        <th>Stored file</th>
+                        <th>Format</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="template : ${templates}">
+                        <td class="ps-4" th:text="${template.id}"></td>
+
+                        <td>
+                            <span class="fw-semibold"
+                                  th:text="${template.name}"></span>
+                        </td>
+
+                        <td>
+                            <code th:text="${template.fileName}"></code>
+                        </td>
+
+                        <td>
+                            <span class="badge text-bg-secondary"
+                                  th:text="${#strings.toUpperCase(
+                                      #strings.substring(
+                                          template.fileName,
+                                          #strings.length(template.fileName) - 6
+                                      )
+                                  )}">
+                            </span>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary me-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    th:attr="data-id=${template.id},
+                                             data-name=${template.name},
+                                             data-filename=${template.fileName}"
+                                    onclick="openEditModal(this)">
+                                Edit
+                            </button>
+
+                            <form th:action="@{/reports/{id}/delete(id=${template.id})}"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this template?');">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Create modal -->
+<div class="modal fade" id="createModal" tabindex="-1"
+     aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form th:action="@{/reports}"
+              method="post"
+              enctype="multipart/form-data"
+              class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">
+                    New report template
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="createName" class="form-label">
+                        Template name
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="createName"
+                           name="name"
+                           maxlength="255"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="createFile" class="form-label">
+                        Template file
+                    </label>
+                    <input type="file"
+                           class="form-control"
+                           id="createFile"
+                           name="file"
+                           accept=".jasper"
+                           required>
+                    <div class="form-text">
+                        Accepted formats: .jasper. Maximum size: 20 MB.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Upload template
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal fade" id="editModal" tabindex="-1"
+     aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editForm"
+              method="post"
+              enctype="multipart/form-data"
+              class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">
+                    Edit report template
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="editName" class="form-label">
+                        Template name
+                    </label>
+                    <input type="text"
+                           class="form-control"
+                           id="editName"
+                           name="name"
+                           maxlength="255"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Current file</label>
+                    <div>
+                        <code id="currentFileName"></code>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="editFile" class="form-label">
+                        Replace file (optional)
+                    </label>
+                    <input type="file"
+                           class="form-control"
+                           id="editFile"
+                           name="file"
+                           accept=".jasper">
+                    <div class="form-text">
+                        Leave empty to keep the current file.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Save changes
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function openEditModal(button) {
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const fileName = button.getAttribute('data-filename');
+
+        document.getElementById('editName').value = name;
+        document.getElementById('currentFileName').textContent = fileName;
+        document.getElementById('editFile').value = '';
+
+        document.getElementById('editForm').action = `/reports/${id}`;
+    }
+</script>
+
+</body>
+</html>
