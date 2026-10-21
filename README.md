@@ -162,21 +162,6 @@ On success, the API returns:
 - **Content-Disposition:** `attachment; filename="employee-report.pdf"`
 - **Body:** Generated PDF document
 
-### Example using cURL
-
-Save the request body in a file named `request.json`, then execute:
-
-```bash
-curl -X POST \
-  http://localhost:8080/api/reports/generate \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/pdf" \
-  -d @request.json \
-  --output employee-report.pdf
-```
-
-The generated document will be saved as `employee-report.pdf`.
-
 ## Error Handling
 
 Depending on the failure, requests may result in errors such as:
@@ -188,6 +173,14 @@ Depending on the failure, requests may result in errors such as:
 - PDF generation failure.
 
 For production deployments, these errors should be mapped to appropriate HTTP status codes and consistent JSON error responses.
+
+## JasperReports Version Compatibility
+
+This project uses **JasperReports 6.20.6** to maintain compatibility with compiled `.jasper` templates generated using **Jaspersoft Studio 6.20**.
+
+**Important:** Compiled `.jasper` files may not be compatible across different JasperReports versions. Ensure that your report templates are compiled using a compatible version of Jaspersoft Studio and JasperReports.
+
+If you upgrade JasperReports, verify template compatibility and recompile existing reports when necessary.
 
 ## Security Considerations
 
