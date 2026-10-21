@@ -3,14 +3,11 @@
 A RESTful reporting server built with **Spring Boot** and **JasperReports**. It allows clients to manage report templates and generate PDF reports dynamically by providing report parameters and data through an API.
 
 ## Features
-
 - **Report template management** — Upload, list, edit, and delete compiled JasperReports templates (`.jasper`).
 - **Dynamic PDF generation** — Generate PDF documents from stored templates using custom parameters and data.
+- **Web interface** — Manage templates, generate PDFs, browse generation history, and manage favorites through a simple Thymeleaf and Bootstrap interface.
+- **Report regeneration** — Reopen a previous generation with its report template, parameters, and data prefilled for easy regeneration.
 - **REST API** — Integrate report generation into external applications.
-- **Swagger UI** — Explore and test API endpoints interactively.
-- **Persistent storage** — Store report template metadata in an H2 database.
-- **File storage** — Store uploaded report templates on the server filesystem.
-- **Web interface** — Manage templates through a simple Thymeleaf and Bootstrap interface.
 
 ## Tech Stack
 
