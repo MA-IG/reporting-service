@@ -1,8 +1,11 @@
 package com.mig.reporting_server.service;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mig.reporting_server.dto.GenerateReportRequest;
+import com.mig.reporting_server.entity.ReportGenerationHistory;
 import com.mig.reporting_server.entity.ReportTemplate;
+import com.mig.reporting_server.repository.ReportGenerationHistoryRepository;
 import com.mig.reporting_server.repository.ReportTemplateRepository;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
@@ -27,11 +30,17 @@ public class ReportingService {
 
     private final ReportTemplateRepository repository;
     private final Path uploadDir;
+    private final ReportGenerationHistoryRepository historyRepository;
+    private final ObjectMapper objectMapper;
 
     public ReportingService(
             ReportTemplateRepository repository,
+            ReportGenerationHistoryRepository historyRepository,
+            ObjectMapper objectMapper,
             @Value("${app.upload.dir}") String uploadDirectory) {
         this.repository = repository;
+        this.historyRepository = historyRepository;
+        this.objectMapper = objectMapper;
         this.uploadDir = Paths.get(uploadDirectory)
                 .toAbsolutePath()
                 .normalize();
@@ -226,7 +235,12 @@ public class ReportingService {
                     outputStream
             );
 
-            return outputStream.toByteArray();
+            byte[] pdf = outputStream.toByteArray();
+
+            saveHistory(request);
+
+            return pdf;
+
         } catch (JRException e) {
             throw new IllegalStateException(
                     "Failed to generate PDF for report: "
@@ -235,5 +249,46 @@ public class ReportingService {
             );
         }
     }
+
+    private void saveHistory(GenerateReportRequest request) {
+        try {
+            ReportGenerationHistory history = new ReportGenerationHistory();
+
+            history.setReportName(request.reportName());
+            history.setParameters(
+                    objectMapper.writeValueAsString(request.parameters())
+            );
+            history.setData(
+                    objectMapper.writeValueAsString(request.data())
+            );
+            history.setFavorite(false);
+
+            historyRepository.save(history);
+
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(
+                    "Failed to save report generation history", e
+            );
+        }
+    }
+
+
+    public List<ReportGenerationHistory> findAllHistory() {
+        return historyRepository.findAllByOrderByGeneratedAtDesc();
+    }
+
+    public List<ReportGenerationHistory> findFavoriteHistory() {
+        return historyRepository.findByFavoriteTrueOrderByGeneratedAtDesc();
+    }
+
+    public void toggleFavorite(Long id) {
+        ReportGenerationHistory history = historyRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("History record not found: " + id));
+
+        history.setFavorite(!history.isFavorite());
+        historyRepository.save(history);
+    }
+
 }
 

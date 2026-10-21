@@ -94,4 +94,35 @@ public class PageController {
         model.addAttribute("templates", service.findAll());
         return "generate-report";
     }
+
+
+    @GetMapping("/history")
+    public String history(
+            @RequestParam(defaultValue = "all") String filter,
+            Model model) {
+
+        boolean favoritesOnly = "favorites".equals(filter);
+
+        model.addAttribute(
+                "history",
+                favoritesOnly
+                        ? service.findFavoriteHistory()
+                        : service.findAllHistory()
+        );
+
+        model.addAttribute("filter", favoritesOnly ? "favorites" : "all");
+
+        return "history";
+    }
+
+    @PostMapping("/history/{id}/favorite")
+    public String toggleFavorite(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "all") String filter) {
+
+        service.toggleFavorite(id);
+
+        return "redirect:/history?filter=" + filter;
+    }
+
 }

@@ -14,18 +14,18 @@ A RESTful reporting server built with **Spring Boot** and **JasperReports**. It 
 
 ## Tech Stack
 
-| Technology | Purpose |
-|---|---|
-| Java 21 | Programming language |
-| Spring Boot | Application framework |
-| Spring Web MVC | REST API and web endpoints |
-| Spring Data JPA | Database access |
-| H2 Database | Template metadata persistence |
+| Technology | Purpose                              |
+|---|--------------------------------------|
+| Java 21 | Programming language                 |
+| Spring Boot | Application framework                |
+| Spring Web MVC | REST API and web endpoints           |
+| Spring Data JPA | Database access                      |
+| H2 Database | Template metadata persistence        |
 | JasperReports | Report processing and PDF generation |
-| Thymeleaf | Server-rendered web interface |
-| Bootstrap | UI styling |
-| Springdoc OpenAPI | Swagger API documentation |
-| Maven | Dependency management and build |
+| Thymeleaf | Server-rendered web interface        |
+| Bootstrap | UI styling                           |
+| Springdoc OpenAPI | Swagger API documentation            |
+| Maven | Dependency management and build      |
 
 ## Getting Started
 
