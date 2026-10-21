@@ -162,25 +162,13 @@ On success, the API returns:
 - **Content-Disposition:** `attachment; filename="employee-report.pdf"`
 - **Body:** Generated PDF document
 
-## Error Handling
-
-Depending on the failure, requests may result in errors such as:
-
-- Missing or invalid request fields.
-- Report template not found.
-- Template file missing from the filesystem.
-- Invalid or incompatible compiled report.
-- PDF generation failure.
-
-For production deployments, these errors should be mapped to appropriate HTTP status codes and consistent JSON error responses.
-
 ## JasperReports Version Compatibility
 
 This project uses **JasperReports 6.20.6** to maintain compatibility with compiled `.jasper` templates generated using **Jaspersoft Studio 6.20**.
 
 **Important:** Compiled `.jasper` files may not be compatible across different JasperReports versions. Ensure that your report templates are compiled using a compatible version of Jaspersoft Studio and JasperReports.
 
-If you upgrade JasperReports, verify template compatibility and recompile existing reports when necessary.
+Or change jasperReports version in your pom.xml file
 
 ## Security Considerations
 

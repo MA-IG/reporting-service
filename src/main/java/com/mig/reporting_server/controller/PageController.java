@@ -88,4 +88,10 @@ public class PageController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/generate")
+    public String generatePage(Model model) {
+        model.addAttribute("templates", service.findAll());
+        return "generate-report";
+    }
 }
