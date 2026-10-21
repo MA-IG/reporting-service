@@ -290,5 +290,15 @@ public class ReportingService {
         historyRepository.save(history);
     }
 
+
+    public ReportGenerationHistory findHistoryById(Long id) {
+        return historyRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "History record not found: " + id
+                        ));
+    }
+
+
 }
 

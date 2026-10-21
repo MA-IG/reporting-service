@@ -39,7 +39,8 @@
 
                         <option th:each="template : ${templates}"
                                 th:value="${template.name}"
-                                th:text="${template.name}">
+                                th:text="${template.name}"
+                                th:selected="${template.name == selectedReport}">
                         </option>
                     </select>
                 </div>
@@ -53,9 +54,11 @@
                               class="form-control font-monospace"
                               rows="6"
                               spellcheck="false"
-                              required>{
-  "title": "My Report"
-}</textarea>
+                              required
+                              th:text="${parameters != null ? parameters : '{
+                          &quot;title&quot;: &quot;My Report&quot;
+                        }'}">
+                    </textarea>
 
                     <div class="form-text">
                         Use the parameter names declared in your JasperReports template.
@@ -71,18 +74,16 @@
                               class="form-control font-monospace"
                               rows="10"
                               spellcheck="false"
-                              required>[
-  {
-    "id": 1,
-    "name": "Ahmed",
-    "salary": 12000
-  },
-  {
-    "id": 2,
-    "name": "Sara",
-    "salary": 15000
-  }
-]</textarea>
+                              required
+                              th:text="${data != null ? data : '[
+                          {
+                            &quot;id&quot;: 1,
+                            &quot;name&quot;: &quot;Ahmed&quot;,
+                            &quot;salary&quot;: 12000
+                          }
+                        ]'}">
+
+                    </textarea>
 
                     <div class="form-text">
                         Each object's keys must match the fields in the report template.

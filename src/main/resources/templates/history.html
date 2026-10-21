@@ -91,6 +91,10 @@
                 ? '★ Unfavorite'
                 : '☆ Favorite'">
               </button>
+              <a th:href="@{/history/{id}/regenerate(id=${item.id})}"
+                 class="btn btn-sm btn-primary">
+                Regenerate
+              </a>
             </form>
           </td>
         </tr>

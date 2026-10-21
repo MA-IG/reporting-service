@@ -1,6 +1,8 @@
 package com.mig.reporting_server.controller;
 
+import com.mig.reporting_server.entity.ReportGenerationHistory;
 import com.mig.reporting_server.entity.ReportTemplate;
+import com.mig.reporting_server.repository.ReportGenerationHistoryRepository;
 import com.mig.reporting_server.service.ReportingService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -20,7 +22,8 @@ public class PageController {
 
     private final ReportingService service;
 
-    public PageController(ReportingService service) {
+    public PageController(ReportingService service)
+    {
         this.service = service;
     }
 
@@ -123,6 +126,18 @@ public class PageController {
         service.toggleFavorite(id);
 
         return "redirect:/history?filter=" + filter;
+    }
+
+    @GetMapping("/history/{id}/regenerate")
+    public String regenerate(@PathVariable Long id, Model model) {
+        ReportGenerationHistory history = service.findHistoryById(id);
+
+        model.addAttribute("templates", service.findAll());
+        model.addAttribute("selectedReport", history.getReportName());
+        model.addAttribute("parameters", history.getParameters());
+        model.addAttribute("data", history.getData());
+
+        return "generate-report";
     }
 
 }
